@@ -1,0 +1,363 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>cox model | Gridea</title>
+<link rel="shortcut icon" href="https://happyzhihao.github.io/favicon.ico?v=1680354309950">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://happyzhihao.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="cox model | Gridea - Atom Feed" href="https://happyzhihao.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="library(survival)
+rm(list = ls())
+
+模拟设置
+
+研究入组时长50个月，随访时长180个月
+事件：基线hazard=0.05；服从weibull分布：Ht=(lambda * t)^alpha (设置alph..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://happyzhihao.github.io">
+  <img class="avatar" src="https://happyzhihao.github.io/images/avatar.png?v=1680354309950" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              cox model
+            </h2>
+            <div class="post-info">
+              <span>
+                2023-04-01
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <pre><code class="language-R">library(survival)
+rm(list = ls())
+</code></pre>
+<h1 id="模拟设置">模拟设置</h1>
+<ul>
+<li>研究入组时长50个月，随访时长180个月</li>
+<li>事件：基线hazard=0.05；服从weibull分布：Ht=(lambda * t)^alpha (设置alpha=2)</li>
+</ul>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>H</mi><mo>(</mo><mi>t</mi><mo>)</mo><mo>=</mo><mo>(</mo><mi>λ</mi><mi>t</mi><msup><mo>)</mo><mi>α</mi></msup></mrow><annotation encoding="application/x-tex">H(t)=(\lambda t)^\alpha
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathdefault">t</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathdefault">λ</span><span class="mord mathdefault">t</span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7143919999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.0037em;">α</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<ul>
+<li>失访：hazard=0.01，服从指数分布</li>
+<li>满足比例风险假设</li>
+<li>组别变量x：0（对照组）、1（试验组）；cox model中回归系数beta=0.5</li>
+</ul>
+<p>若满足比例风险假定，累积风险函数Ht存在以下关系：Ht=H0t * exp(beta * x)</p>
+<p>模拟步骤：</p>
+<ul>
+<li>(1) 计算生存函数St，转换为累积死亡率函数Ft，reverse CDF method获得生存时间的模拟样本</li>
+<li>(2) 失访指数分布，reverse CDF method获得失访时间的模拟样本</li>
+<li>(3) 根据事件时间、失访时间、随访截止时间判断结局status和time的取值</li>
+</ul>
+<h1 id="模拟数据">模拟数据</h1>
+<p>模拟50000个受试者</p>
+<pre><code class="language-R">N &lt;- 50000
+</code></pre>
+<h2 id="每个人的事件时间">每个人的事件时间</h2>
+<pre><code class="language-R">set.seed(123)
+u_event &lt;- runif(n = N)
+x &lt;- sample(c(0, 1), size = N, replace = T, prob = c(0.5, 0.5))
+
+lambda1 &lt;- 0.05
+alpha &lt;- 2
+beta &lt;- 0.5
+
+t_event &lt;- function(u, lambda, alpha, beta, x) {
+  t &lt;- (-log(1 - u) / exp(beta * x))^(1 / alpha) / lambda
+  return(t)
+}
+
+df &lt;- data.frame(
+  T1 = t_event(u_event, lambda1, alpha, beta, x),
+  x = x
+)
+</code></pre>
+<h2 id="每个人的失访时间">每个人的失访时间</h2>
+<pre><code class="language-R"># St=exp(-lambda * t)
+lambda2 &lt;- 0.01
+
+set.seed(234)
+u_loss &lt;- runif(n = N)
+t_loss &lt;- function(u, lambda) {
+  t &lt;- (-log(1 - u)) / lambda
+  return(t)
+}
+
+df$T2 &lt;- t_loss(u_loss, lambda2)
+</code></pre>
+<h2 id="每个人的实际随访时长">每个人的实际随访时长</h2>
+<pre><code class="language-R"># 随访时间180个月
+df$T3 &lt;- 180
+
+# 500个人入组时间服从均匀分布，入组时间50个月
+set.seed(345)
+t_enroll &lt;- runif(n = N, min = 0, max = 50)
+
+# 每个人的实际随访时长
+df$T4 &lt;- 180 + 50 - t_enroll
+</code></pre>
+<pre><code class="language-R">head(df)
+</code></pre>
+<table class="dataframe">
+<caption>A data.frame: 6 × 5</caption>
+<thead>
+	<tr><th></th><th scope=col>T1</th><th scope=col>x</th><th scope=col>T2</th><th scope=col>T3</th><th scope=col>T4</th></tr>
+	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+</thead>
+<tbody>
+	<tr><th scope=row>1</th><td> 9.070059</td><td>1</td><td>136.892606</td><td>180</td><td>219.1873</td></tr>
+	<tr><th scope=row>2</th><td>19.408299</td><td>1</td><td>152.194193</td><td>180</td><td>216.2618</td></tr>
+	<tr><th scope=row>3</th><td>11.295567</td><td>1</td><td>  2.024058</td><td>180</td><td>210.5037</td></tr>
+	<tr><th scope=row>4</th><td>22.816232</td><td>1</td><td>149.649049</td><td>180</td><td>197.2130</td></tr>
+	<tr><th scope=row>5</th><td>33.593031</td><td>0</td><td>  6.925372</td><td>180</td><td>208.2067</td></tr>
+	<tr><th scope=row>6</th><td> 4.318649</td><td>0</td><td>103.506054</td><td>180</td><td>189.8258</td></tr>
+</tbody>
+</table>
+<h2 id="判断生存结局time和status取值">判断生存结局time和status取值</h2>
+<pre><code class="language-R"># T1：潜在事件时间
+# T2：潜在失访时间
+# T3：入组时间
+# T4：潜在随访时长(或随访终止时间)
+
+df$status &lt;- df$time &lt;- NA
+
+# case1：事件最先发生
+df$time[df$T1 &lt;= df$T2 &amp; df$T1 &lt;= df$T4] &lt;-
+  df$T1[df$T1 &lt;= df$T2 &amp; df$T1 &lt;= df$T4]
+df$status[df$T1 &lt;= df$T2 &amp; df$T1 &lt;= df$T4] &lt;- 1
+
+# case2：失访最先发生
+df$time[df$T2 &lt;= df$T1 &amp; df$T2 &lt;= df$T4] &lt;-
+  df$T2[df$T2 &lt;= df$T1 &amp; df$T2 &lt;= df$T4]
+df$status[df$T2 &lt;= df$T1 &amp; df$T2 &lt;= df$T4] &lt;- 0
+
+# case3: 随访终止最先发生
+df$time[df$T4 &lt;= df$T1 &amp; df$T4 &lt;= df$T2] &lt;-
+  df$T4[df$T4 &lt;= df$T1 &amp; df$T4 &lt;= df$T2]
+df$status[df$T4 &lt;= df$T1 &amp; df$T4 &lt;= df$T2] &lt;- 0
+
+print(apply(df, 2, function(x) sum(is.na(x))))
+</code></pre>
+<pre><code>    T1      x     T2     T3     T4   time status 
+     0      0      0      0      0      0      0 
+</code></pre>
+<h1 id="拟合cox比例风险模型">拟合Cox比例风险模型</h1>
+<p>回归系数0.499626约等于模拟中设定的beta=0.5</p>
+<p>试验组相比对照组，风险增加64.8%</p>
+<pre><code class="language-R">df$x &lt;- factor(df$x, levels = c(0, 1))
+fit_cox &lt;- coxph(Surv(time = time, event = status) ~ x, data = df)
+summary(fit_cox)
+</code></pre>
+<pre><code>Call:
+coxph(formula = Surv(time = time, event = status) ~ x, data = df)
+
+  n= 50000, number of events= 42866 
+
+       coef exp(coef) se(coef)     z Pr(&gt;|z|)    
+x1 0.499626  1.648104 0.009907 50.43   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+   exp(coef) exp(-coef) lower .95 upper .95
+x1     1.648     0.6068     1.616      1.68
+
+Concordance= 0.562  (se = 0.001 )
+Likelihood ratio test= 2533  on 1 df,   p=&lt;2e-16
+Wald test            = 2543  on 1 df,   p=&lt;2e-16
+Score (logrank) test = 2591  on 1 df,   p=&lt;2e-16
+</code></pre>
+<h1 id="拟合加速时间失效模型aft">拟合加速时间失效模型（AFT）</h1>
+<p>AFT model给出组别的效应值：相比于对照组，试验组生存时间减少22.1%</p>
+<p>相比于cox model，该模型也给出基线weibull分布的参数</p>
+<pre><code class="language-R">round(exp(-0.25003) - 1, 3)
+</code></pre>
+<p>-0.221</p>
+<pre><code class="language-R">fit_aft &lt;- survreg(Surv(time = time, event = status) ~ x, data = df, dist=&quot;weibull&quot;)
+summary(fit_aft)
+</code></pre>
+<pre><code>Call:
+survreg(formula = Surv(time = time, event = status) ~ x, data = df, 
+    dist = &quot;weibull&quot;)
+               Value Std. Error      z      p
+(Intercept)  2.99048    0.00349  856.0 &lt;2e-16
+x1          -0.25003    0.00483  -51.7 &lt;2e-16
+Log(scale)  -0.69264    0.00371 -186.8 &lt;2e-16
+
+Scale= 0.5 
+
+Weibull distribution
+Loglik(model)= -150325.6   Loglik(intercept only)= -151612.7
+	Chisq= 2574.29 on 1 degrees of freedom, p= 0 
+Number of Newton-Raphson Iterations: 7 
+n= 50000 
+</code></pre>
+<p>fit_aft$scale即为模拟中weibull分布的1/alpha</p>
+<pre><code class="language-R">fit_aft$scale
+</code></pre>
+<p>0.500252883887261</p>
+<p>exp(coef(fit_aft)[1])即为模拟中weibull分布的1 / lambda1</p>
+<pre><code class="language-R">exp(coef(fit_aft)[1])
+1 / lambda1
+</code></pre>
+<p><strong>(Intercept):</strong> 19.8951527049807</p>
+<p>20</p>
+<h1 id="cox与aft-model回归系数对应">Cox与AFT model回归系数对应</h1>
+<p>AFT model的回归系数/scale=-0.499800916384525约等于cox model的回归系数0.499626</p>
+<pre><code class="language-R">coef(fit_aft)[2] / fit_aft$scale
+</code></pre>
+<p><strong>x1:</strong> -0.499800916384525</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E6%A8%A1%E6%8B%9F%E8%AE%BE%E7%BD%AE">模拟设置</a></li>
+<li><a href="#%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE">模拟数据</a>
+<ul>
+<li><a href="#%E6%AF%8F%E4%B8%AA%E4%BA%BA%E7%9A%84%E4%BA%8B%E4%BB%B6%E6%97%B6%E9%97%B4">每个人的事件时间</a></li>
+<li><a href="#%E6%AF%8F%E4%B8%AA%E4%BA%BA%E7%9A%84%E5%A4%B1%E8%AE%BF%E6%97%B6%E9%97%B4">每个人的失访时间</a></li>
+<li><a href="#%E6%AF%8F%E4%B8%AA%E4%BA%BA%E7%9A%84%E5%AE%9E%E9%99%85%E9%9A%8F%E8%AE%BF%E6%97%B6%E9%95%BF">每个人的实际随访时长</a></li>
+<li><a href="#%E5%88%A4%E6%96%AD%E7%94%9F%E5%AD%98%E7%BB%93%E5%B1%80time%E5%92%8Cstatus%E5%8F%96%E5%80%BC">判断生存结局time和status取值</a></li>
+</ul>
+</li>
+<li><a href="#%E6%8B%9F%E5%90%88cox%E6%AF%94%E4%BE%8B%E9%A3%8E%E9%99%A9%E6%A8%A1%E5%9E%8B">拟合Cox比例风险模型</a></li>
+<li><a href="#%E6%8B%9F%E5%90%88%E5%8A%A0%E9%80%9F%E6%97%B6%E9%97%B4%E5%A4%B1%E6%95%88%E6%A8%A1%E5%9E%8Baft">拟合加速时间失效模型（AFT）</a></li>
+<li><a href="#cox%E4%B8%8Eaft-model%E5%9B%9E%E5%BD%92%E7%B3%BB%E6%95%B0%E5%AF%B9%E5%BA%94">Cox与AFT model回归系数对应</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://happyzhihao.github.io/post/test-title/">
+              <h3 class="post-title">
+                Test title
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://happyzhihao.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
