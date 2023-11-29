@@ -1,0 +1,14 @@
+---
+title: "print(hello world)"
+description: ""
+author: "Zhihao"
+date: "4/9/2023"
+categories: [Quarto, R, SAS]
+image: "image.jpg"
+draft: false
+freeze: false
+---
+
+```{r}
+print("hello world")
+```
