@@ -1,0 +1,38 @@
+---
+title: "Critical value for two correlated endpoints"
+description: "Post description"
+author: "Zhihao"
+date: "4/6/2023"
+categories: [code, analysis]
+image: "image.jpg"
+---
+
+```{r}
+library(tidyverse)
+library(mvtnorm)
+rm(list = ls())
+```
+
+```{r}
+solve_z <- function(z) {
+  1 - pmvnorm(lower = c(-Inf, -Inf), 
+              upper = c(z, z), 
+              mean = c(0, 0), 
+              corr = matrix(c(1, 0.9, 0.9, 1), nrow = 2, byrow = T)) - 0.025
+}
+
+root <- uniroot(f = solve_z, interval = c(0.01, 5))$root
+1 - pnorm(q = root)
+```
+
+```{r}
+solve_z <- function(z) {
+  1 - pmvnorm(lower = c(-z, -z), 
+              upper = c(z, z), 
+              mean = c(0, 0), 
+              corr = matrix(c(1, 0.8, 0.8, 1), nrow = 2, byrow = T)) - 0.10
+}
+
+root <- uniroot(f = solve_z, interval = c(0.01, 5))$root
+1 - pnorm(q = root)
+```

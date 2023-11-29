@@ -1,0 +1,33 @@
+---
+title: "Critical value for two correlated endpoints"
+description: "Post description"
+author: "Zhihao"
+date: "4/6/2023"
+categories: [code, analysis]
+image: "image.jpg"
+---
+
+```{r}
+library(tidyverse)
+library(mvtnorm)
+library(rpact)
+rm(list = ls())
+```
+
+## Calculate sample size
+
+-   one
+-   two
+
+```{r}
+SampleSize <- getSampleSizeMeans(
+  alpha = 0.025,
+  beta = 0.2,
+  sided = 1,
+  groups = 2,
+  alternative = 2,
+  stDev = 3.5,
+  allocationRatioPlanned = 1
+)
+SampleSize
+```

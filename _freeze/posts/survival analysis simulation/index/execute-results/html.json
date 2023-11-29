@@ -1,0 +1,14 @@
+{
+  "hash": "2f0316bad3a81f7a1e7e25cddcc434a0",
+  "result": {
+    "markdown": "---\ntitle: \"Critical value for two correlated endpoints\"\ndescription: \"Post description\"\nauthor: \"Zhihao\"\ndate: \"4/6/2023\"\ncategories: [code, analysis]\nimage: \"image.jpg\"\n---\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nWarning: package 'tidyverse' was built under R version 4.2.2\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\n── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──\n✔ ggplot2 3.3.6      ✔ purrr   0.3.4 \n✔ tibble  3.1.8      ✔ dplyr   1.0.10\n✔ tidyr   1.2.1      ✔ stringr 1.4.1 \n✔ readr   2.1.2      ✔ forcats 0.5.2 \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\n```\n:::\n\n```{.r .cell-code}\nlibrary(mvtnorm)\nlibrary(rpact)\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nWarning: package 'rpact' was built under R version 4.2.3\n```\n:::\n\n```{.r .cell-code}\nrm(list = ls())\n```\n:::\n\n\n## Calculate sample size\n\n-   one\n-   two\n\n\n::: {.cell}\n\n```{.r .cell-code}\nSampleSize <- getSampleSizeMeans(\n  alpha = 0.025,\n  beta = 0.2,\n  sided = 1,\n  groups = 2,\n  alternative = 2,\n  stDev = 3.5,\n  allocationRatioPlanned = 1\n)\nSampleSize\n```\n\n::: {.cell-output .cell-output-stdout}\n```\nDesign plan parameters and output for means:\n\nDesign parameters:\n  Critical values                              : 1.96 \n  Significance level                           : 0.0250 \n  Type II error rate                           : 0.2000 \n  Test                                         : one-sided \n\nUser defined parameters:\n  Alternatives                                 : 2 \n  Standard deviation                           : 3.5 \n\nDefault parameters:\n  Mean ratio                                   : FALSE \n  Theta H0                                     : 0 \n  Normal approximation                         : FALSE \n  Treatment groups                             : 2 \n  Planned allocation ratio                     : 1 \n\nSample size and output:\n  Number of subjects fixed                     : 98.1 \n  Number of subjects fixed (1)                 : 49.1 \n  Number of subjects fixed (2)                 : 49.1 \n  Critical values (treatment effect scale)     : 1.403 \n\nLegend:\n  (i): values of treatment arm i\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

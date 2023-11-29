@@ -1,0 +1,14 @@
+{
+  "hash": "586a6e528f189ccb6bb5fae519fc6dcc",
+  "result": {
+    "markdown": "---\ntitle: \"number of events needed in survival analysis\"\n---\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

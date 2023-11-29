@@ -1,0 +1,14 @@
+{
+  "hash": "15370154ba42b76c4db96d96ebe4df8a",
+  "result": {
+    "markdown": "---\ntitle: \"Critical value for two correlated endpoints\"\ndescription: \"Post description\"\nauthor: \"Zhihao\"\ndate: \"4/6/2023\"\ncategories:\n  - statistic\n  - code\n---\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(tidyverse)\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nWarning: package 'tidyverse' was built under R version 4.2.2\n```\n:::\n\n::: {.cell-output .cell-output-stderr}\n```\n── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──\n✔ ggplot2 3.3.6      ✔ purrr   0.3.4 \n✔ tibble  3.1.8      ✔ dplyr   1.0.10\n✔ tidyr   1.2.1      ✔ stringr 1.4.1 \n✔ readr   2.1.2      ✔ forcats 0.5.2 \n── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n✖ dplyr::filter() masks stats::filter()\n✖ dplyr::lag()    masks stats::lag()\n```\n:::\n\n```{.r .cell-code}\nlibrary(mvtnorm)\nrm(list = ls())\n```\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nsolve_z <- function(z) {\n  1 - pmvnorm(lower = c(-Inf, -Inf), \n              upper = c(z, z), \n              mean = c(0, 0), \n              corr = matrix(c(1, 0.9, 0.9, 1), nrow = 2, byrow = T)) - 0.025\n}\n\nroot <- uniroot(f = solve_z, interval = c(0.01, 5))$root\n1 - pnorm(q = root)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 0.01750927\n```\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nsolve_z <- function(z) {\n  1 - pmvnorm(lower = c(-z, -z), \n              upper = c(z, z), \n              mean = c(0, 0), \n              corr = matrix(c(1, 0.8, 0.8, 1), nrow = 2, byrow = T)) - 0.10\n}\n\nroot <- uniroot(f = solve_z, interval = c(0.01, 5))$root\n1 - pnorm(q = root)\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n[1] 0.0324447\n```\n:::\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

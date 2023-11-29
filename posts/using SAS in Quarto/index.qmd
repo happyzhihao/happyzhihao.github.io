@@ -1,0 +1,44 @@
+---
+title: "using SAS in Quarto"
+description: ""
+author: "Zhihao"
+date: "4/9/2023"
+categories: [Quarto, R, SAS]
+image: "image.jpg"
+draft: false
+freeze: false
+---
+
+```{r, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(collapse = T)
+```
+
+# SASmarkdown package
+
+SASmarkdown package supports using SAS in Rmarkdown or Quarto files
+
+```{r, warning=FALSE, message=F, collapse=T}
+library(SASmarkdown)
+library(knitr)
+```
+
+# Settings for SAS
+
+```{r}
+saspath <- "E:/Program Files/SASHome/SASFoundation/9.4/sas.exe"
+sasopts <- "-nosplash -ls 75"
+opts_chunk$set(
+  engine.path = list(sas = saspath, saslog = saspath),
+  engine.opts = list(sas = sasopts, saslog = sasopts),
+  comment = NA
+)
+```
+
+`encoding="gbk"` allows outputs containing Chinese characters, otherwise the Chinese
+characters could be messy.
+
+```{sas, encoding="gbk"}
+proc print data=sashelp.class;
+run;
+```

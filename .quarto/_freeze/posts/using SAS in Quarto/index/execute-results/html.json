@@ -1,0 +1,14 @@
+{
+  "hash": "d135c5fabff41ec3721c0ca18388465b",
+  "result": {
+    "markdown": "---\ntitle: \"using SAS in Quarto\"\ndescription: \"\"\nauthor: \"Zhihao\"\ndate: \"4/9/2023\"\ncategories: [Quarto, R, SAS]\nimage: \"image.jpg\"\ndraft: false\nfreeze: false\n---\n\n\n\n\n# SASmarkdown package\n\nSASmarkdown package supports using SAS in Rmarkdown or Quarto files\n\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(SASmarkdown)\nlibrary(knitr)\n```\n:::\n\n\n# Settings for SAS\n\n\n::: {.cell}\n\n```{.r .cell-code}\nsaspath <- \"E:/Program Files/SASHome/SASFoundation/9.4/sas.exe\"\nsasopts <- \"-nosplash -ls 75\"\nopts_chunk$set(\n  engine.path = list(sas = saspath, saslog = saspath),\n  engine.opts = list(sas = sasopts, saslog = sasopts),\n  comment = NA\n)\n```\n:::\n\n\n`encoding=\"gbk\"` allows outputs containing Chinese characters, otherwise the Chinese\ncharacters could be messy.\n\n\n::: {.cell encoding='gbk'}\n\n```{.sas .cell-code}\nproc print data=sashelp.class;\nrun;\n##            观测    Name          Sex    Age    Height    Weight\n## \n##              1     阿尔弗雷德    男      14     69.0      112.5\n##              2     爱丽丝        女      13     56.5       84.0\n##              3     芭芭拉        女      13     65.3       98.0\n##              4     凯露          女      14     62.8      102.5\n##              5     亨利          男      14     63.5      102.5\n##              6     詹姆斯        男      12     57.3       83.0\n##              7     简            女      12     59.8       84.5\n##              8     雅妮特        女      15     62.5      112.5\n##              9     杰弗瑞        男      13     62.5       84.0\n##             10     约翰          男      12     59.0       99.5\n##             11     乔伊斯        女      11     51.3       50.5\n##             12     茱迪          女      14     64.3       90.0\n##             13     罗伊斯        女      12     56.3       77.0\n##             14     玛丽          女      15     66.5      112.0\n##             15     菲利普        男      16     72.0      150.0\n##             16     罗伯特        男      12     64.8      128.0\n##             17     罗纳德        男      15     67.0      133.0\n##             18     托马斯        男      11     57.5       85.0\n##             19     威廉          男      15     66.5      112.0\n```\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

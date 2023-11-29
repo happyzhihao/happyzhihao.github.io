@@ -1,0 +1,42 @@
+---
+title: "plot epplipse"
+description: ""
+author: "Zhihao"
+date: "4/9/2023"
+categories: [R, plot]
+image: "image.jpg"
+draft: false
+freeze: false
+---
+
+```{r, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(collapse = T)
+```
+
+# mixtools package
+
+using the `ellipse` function in mixtools package to generate ellipse data
+
+```{r}
+library(mixtools)
+library(ggplot2)
+rm(list = ls())
+```
+
+the parameter of `ellipse` function are means and standard deviations of multivariate normal distribution
+
+```{r}
+mu <- c(1, 3)
+sigma <- matrix(c(1, 0.3, 0.3, 1.5),
+  nrow = 2, ncol = 2,
+  byrow = T
+)
+e <- ellipse(mu, sigma, npoints = 250, draw = F)
+e <- as.data.frame(e)
+```
+
+```{r}
+ggplot(data = e, aes(x = V1, y = V2)) + 
+  geom_path()
+```
